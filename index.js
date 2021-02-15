@@ -67,8 +67,20 @@ app.post('/api/persons', (request, response) => {
 
 	const name = body.name;
 	const number  = body.number;
-	const id = generateRandId()
+	if(!name | !number) {
+		return response.status(400).json({
+			error: 'name or number missing'
+		})
+	}
 
+	const existPerson = persons.find(person => person.name === name)
+	if(existPerson){
+		return response.status(400).json({
+			error: 'name must be unique'
+		})
+	}
+
+	const id = generateRandId()
 	const newPerson = {
 		"name": name,
 		"number": number,
