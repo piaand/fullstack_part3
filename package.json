@@ -1,0 +1,27 @@
+{
+  "name": "phonebook",
+  "version": "0.0.1",
+  "description": "Phonebook app",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/piaand/fullstack_part3.git"
+  },
+  "author": "Pia Andersin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/piaand/fullstack_part3/issues"
+  },
+  "homepage": "https://github.com/piaand/fullstack_part3#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
