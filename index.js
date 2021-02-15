@@ -26,6 +26,11 @@ let persons = [
     }
   ]
 
+//Generates a randonm integer from 0 to 9999
+const generateRandId = () => {
+	return Math.floor(Math.random() * Math.floor(10000))
+}
+
 app.get('/', (request, response) => {
 	response.send('<h1>Hello World</h1>')
 })
@@ -50,6 +55,29 @@ app.get('/api/persons/:id', (request, response) => {
 	}
 
 	response.json(person)
+})
+
+app.post('/api/persons', (request, response) => {
+	const body = request.body
+	if(!body) {
+		return response.status(400).json({
+			error: 'content missing'
+		})
+	}
+
+	const name = body.name;
+	const number  = body.number;
+	const id = generateRandId()
+
+	const newPerson = {
+		"name": name,
+		"number": number,
+		"id": id,
+	}
+
+	persons = persons.concat(newPerson)
+	console.log(persons)
+	response.json(newPerson)
 })
 
 app.delete('/api/persons/:id', (request, response) => {
