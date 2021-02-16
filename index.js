@@ -84,22 +84,24 @@ app.post('/api/persons', (request, response) => {
 		})
 	}
 
+	/*
+	//This needs to be modified so that ir works with db
 	const existPerson = persons.find(person => person.name === name)
 	if(existPerson){
 		return response.status(400).json({
 			error: 'name must be unique'
 		})
 	}
+	*/
 
-	const id = generateRandId()
-	const newPerson = {
+	const newPerson = new Person({
 		"name": name,
 		"number": number,
-		"id": id,
-	}
+	})
 
-	persons = persons.concat(newPerson)
-	console.log(persons)
+	newPerson.save().then(response => {
+		mongoose.connection.close()
+	})
 	response.json(newPerson)
 })
 
