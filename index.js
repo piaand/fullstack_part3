@@ -15,7 +15,10 @@ const errorHandler = (error, request, response, next) => {
 	console.log(error.message)
 
 	if(error.name === 'CastError') {
-		return response.status(204).send({ error: 'malformatted id' })
+		return response.status(404).send({ error: 'malformatted id' })
+	}
+	if(error.name === 'ValidationError') {
+		return response.status(400).send({ error: error.message })
 	}
 	next(error)
 }
@@ -63,17 +66,9 @@ app.post('/api/persons', (request, response, next) => {
 		})
 	}
 
-	const name = body.name;
-	const number  = body.number;
-	if(!name | !number) {
-		return response.status(400).json({
-			error: 'name or number missing'
-		})
-	}
-
 	const newPerson = new Person({
-		"name": name,
-		"number": number,
+		"name": body.name,
+		"number": body.number,
 	})
 
 	newPerson.save()

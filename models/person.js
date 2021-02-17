@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator');
 
 const url = process.env.MONGODB_URI
 
@@ -12,9 +13,11 @@ mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFind
 	})
 
 const personSchema = new mongoose.Schema({
-	name: String,
-	number: String,
+	name: {type: String, required: true, unique: true, minlength: 3},
+	number: {type: String, required: true, minlength: 8}
 })
+
+personSchema.plugin(uniqueValidator)
 
 personSchema.set('toJSON', {
 	transform: (document, returnedObject) => {
@@ -25,27 +28,3 @@ personSchema.set('toJSON', {
 })
 
 module.exports = mongoose.model('Person', personSchema)
-
-/*
-const Person = mongoose.model('Person', personSchema)
-
-if(args === 3) {
-	Person.find({}).then(result => {
-		console.log('phonebook:')
-		result.forEach(person => {
-			console.log(person)
-		})
-		mongoose.connection.close()
-	  })
-} else {
-	const person = new Person({
-		name: process.argv[3],
-		number: process.argv[4]
-	})
-
-	person.save().then(response => {
-		console.log(`added ${person.name} ${person.number} to phonebook`)
-		mongoose.connection.close()
-	})
-}
-*/
