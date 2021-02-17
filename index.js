@@ -111,9 +111,24 @@ app.post('/api/persons', (request, response, next) => {
 	
 })
 
+//TODO: update the new phonenumber for given id
+app.put('/api/persons/:id', (request, response, next) => {
+	const body = request.body
+
+	const newPerson = {
+		name: body.name,
+		number: body.number
+	}
+
+	Person.findByIdAndUpdate(request.params.id, newPerson, { new: true })
+		.then(updatedPerson => {
+			response.json(updatedPerson.toJSON())
+		})
+		.catch(error => next(error))
+
+})
+
 app.delete('/api/persons/:id', (request, response, next) => {
-	console.log("DELETING HERE:")
-	console.log(request.params.id)
 	Person.findByIdAndRemove(request.params.id)
 		.then(results => {
 			response.status(204).end()
