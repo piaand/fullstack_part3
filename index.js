@@ -34,9 +34,13 @@ let persons = [
     }
   ]
 
-//Generates a randonm integer from 0 to 9999
-const generateRandId = () => {
-	return Math.floor(Math.random() * Math.floor(10000))
+const errorHandler = (error, request, response, next) => {
+	console.log(error.message)
+
+	if(error.name === 'CastError') {
+		return response.status(204).send({ error: 'malformatted id' })
+	}
+	next(error)
 }
 
 app.get('/', (request, response) => {
@@ -45,8 +49,8 @@ app.get('/', (request, response) => {
 
 app.get('/api/persons', (request, response) => {
 	Person.find({}).then(result => {
-		response.json(result)
-		mongoose.connection.close()
+		console.log(result)
+		response.json(result.map(person => person.toJSON()))
 	  })
 })
 
@@ -68,7 +72,7 @@ app.get('/api/persons/:id', (request, response) => {
 	response.json(person)
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
 	const body = request.body
 	if(!body) {
 		return response.status(400).json({
@@ -99,18 +103,25 @@ app.post('/api/persons', (request, response) => {
 		"number": number,
 	})
 
-	newPerson.save().then(response => {
-		mongoose.connection.close()
-	})
-	response.json(newPerson)
+	newPerson.save()
+		.then(savedPerson => {
+			response.json(savedPerson.toJSON())	
+		})
+		.catch(error => next(error))
+	
 })
 
-app.delete('/api/persons/:id', (request, response) => {
-	const id = Number(request.params.id)
-	persons = persons.filter(person => person.id !== id)
-
-	response.status(204).end()
+app.delete('/api/persons/:id', (request, response, next) => {
+	console.log("DELETING HERE:")
+	console.log(request.params.id)
+	Person.findByIdAndRemove(request.params.id)
+		.then(results => {
+			response.status(204).end()
+		})
+		.catch(error => next(error))
 })
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
