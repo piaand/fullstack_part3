@@ -5,7 +5,7 @@ const cors = require('cors')
 const app = express()
 const Person = require('./models/person')
 
-morgan.token('body', function (req, res) { return JSON.stringify(req.body) });
+morgan.token('body', function (req) { return JSON.stringify(req.body) })
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 app.use(express.static('build'))
 app.use(express.json())
@@ -30,7 +30,7 @@ app.get('/', (request, response) => {
 app.get('/api/persons', (request, response) => {
 	Person.find({}).then(result => {
 		response.json(result.map(person => person.toJSON()))
-	  })
+	})
 })
 
 app.get('/info', (request, response, next) => {
@@ -51,7 +51,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 			if(result) {
 				response.json(result.toJSON())
 			} else {
-				return response.status(404).end();
+				return response.status(404).end()
 			}
 		})
 		.catch(error => next(error))
@@ -67,16 +67,16 @@ app.post('/api/persons', (request, response, next) => {
 	}
 
 	const newPerson = new Person({
-		"name": body.name,
-		"number": body.number,
+		'name': body.name,
+		'number': body.number,
 	})
 
 	newPerson.save()
 		.then(savedPerson => {
-			response.json(savedPerson.toJSON())	
+			response.json(savedPerson.toJSON())
 		})
 		.catch(error => next(error))
-	
+
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
@@ -98,6 +98,7 @@ app.put('/api/persons/:id', (request, response, next) => {
 app.delete('/api/persons/:id', (request, response, next) => {
 	Person.findByIdAndRemove(request.params.id)
 		.then(results => {
+			console.log(results)
 			response.status(204).end()
 		})
 		.catch(error => next(error))
