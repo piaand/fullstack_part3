@@ -9,4 +9,4 @@ With the app you can search numbers from the phonebook, add new numbers and dele
 Project is build with mainly javascript but more specifically
 - React
 - Nodejs, Express
-- MongoDB (TODO)
+- MongoDB
